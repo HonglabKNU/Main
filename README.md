@@ -6,7 +6,8 @@ __You need to make new virtual environment on your computer.__
 1. Make new directory for using project.
 2. Download ``environment.yml`` in the project folder.
 3. Turn on 'Terminal' from Mac. Then, enter this command to change directory.
- ``cd (your folder name)``
+ ```cd (your folder name)
+ ```
 
 4. Create new environment. Enter this command.
 
