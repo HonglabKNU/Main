@@ -1,2 +1,14 @@
-# Main
-Test file
+# Before start
+## This repo is based on MacOS 
+You need to make new virtual environment on your computer.
+Download anaconda3 from this link: https://www.anaconda.com/download
+
+1. Make new directory for using project.
+2. Download ```environment.yml``` in the project folder.
+3. Turn on 'Terminal' from Mac. Then, enter this command to change directory.
+ ```cd (your folder name)```
+
+4. Create new environment. Enter this command.
+  ```conda env create -f environment.yml
+  conda activate Honglab3.9```
+ 
