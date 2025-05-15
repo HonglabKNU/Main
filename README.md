@@ -9,6 +9,8 @@ Download anaconda3 from this link: https://www.anaconda.com/download
  ```cd (your folder name)```
 
 4. Create new environment. Enter this command.
-  ```conda env create -f environment.yml
-  conda activate Honglab3.9```
- 
+
+  ```Terminal
+  conda env create -f environment.yml 
+  conda activate Honglab3.9
+  ```
