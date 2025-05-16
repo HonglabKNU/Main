@@ -21,7 +21,7 @@ msigdb.browse <- function(species, name) {
   temp_list <- c(list("gene"), temp[[1]]$geneSymbols)
   geneset <- data.frame(gene = unlist(temp_list))
   # if you wanna delete 'gene' from 1st row,
-  # Hu_geneset_list <- data.frame(gene = temp_df[[1]]$geneSymbols)
+  # geneset <- data.frame(gene = temp_df[[1]]$geneSymbols)
   
   
   return(geneset)
