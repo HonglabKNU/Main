@@ -1,6 +1,6 @@
 # Before start
 ### This repo is based on MacOS 
-__You need to make new virtual environment on your computer.__  
+__You need to make new virtual environment on your computer.__   
 [You can download anaconda3 from here](https://www.anaconda.com/download)
 
 1. Make new directory for using project.
