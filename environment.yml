@@ -1,0 +1,29 @@
+name: Honglab3.9
+channels:
+  - conda-forge
+  - defaults
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+dependencies:
+  - ca-certificates=2025.4.26
+  - libcxx=20.1.5
+  - libffi=3.3
+  - liblzma=5.8.1
+  - liblzma-devel=5.8.1
+  - libsqlite=3.46.0
+  - libzlib=1.2.13
+  - ncurses=6.5
+  - openssl=1.1.1w
+  - pip=25.1.1
+  - python=3.9.0
+  - readline=8.2
+  - setuptools=80.1.0
+  - sqlite=3.46.0
+  - tk=8.6.13
+  - tzdata=2025b
+  - wheel=0.45.1
+  - xz=5.8.1
+  - xz-gpl-tools=5.8.1
+  - xz-tools=5.8.1
+  - zlib=1.2.13
+prefix: /opt/anaconda3/envs/Honglab3.9
