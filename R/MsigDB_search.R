@@ -1,8 +1,12 @@
 #============================================================================#
 ###Build date: 2025.05.18 by CS
-#============================================================================#
+###Last update: 2025.05.19 by CS
 
-msigdb_search <- function() {
+###How to use?
+#============================================================================#
+install.packages(c("shiny", "DT","DBI", "RSQLite", "dplyr", "jsonlite"))
+
+msigdb.search <- function() {
   
 library(shiny)
 library(DT)
@@ -34,9 +38,15 @@ ui <- fluidPage(
       h4("Selected Gene Sets", style ="font-weight: bold; text-align: center; border-top: 1px solid #ccc;border-bottom: 1px solid #ccc;  padding: 10px 0;"),
       DTOutput("selected.df"),
       br(), br(),
-      actionButton("select", "Add to list", class ="btn btn-success btn-lg",style = "width: 100%"),
-      br(), br(),
-      actionButton("export", "Export", class="btn btn-primary btn-lg", style = "width: 100%"),
+      div(
+        style = "display: flex; gap: 10px; justify-content: center;",
+        actionButton("select", "Add", class ="btn btn-success btn-lg",
+                     style = "width: 50%; font-size: 15x; text-align: center;"),
+        actionButton("remove", "Remove", class="btn btn-danger btn-lg",
+                     style = "width: 50%; font-size: 15px; text-align: center;")
+      ),
+      br(),
+      actionButton("export", "Export", class="btn btn-primary", style = "width: 100%"),
       br(), br(),
       actionButton("reset", "Reset", class = "btn btn-danger btn-sm", style = "width: 100%;"),
       br(), br(),
@@ -148,6 +158,15 @@ server <- function(input, output, session) {
     ))))
   })
   
+  #remove selected
+  observeEvent(input$remove, {
+    geneset.selected <- input$selected.df_rows_selected
+    if (geneset.selected != 0) {
+      current.df <- Hu.Msigdf.selected()
+      removed.df <- current.df[-geneset.selected, , drop = F]
+      Hu.Msigdf.selected(removed.df)
+    }
+  })
   
   #reset selected
   observeEvent(input$reset, {
@@ -215,5 +234,37 @@ server <- function(input, output, session) {
 result <- runApp(shinyApp(ui, server))
 return(result)
 }
+msigdb.browse <- function(species, name) {
+  library(jsonlite)
+  
+  if(species == "Hu") {
+    geneset_path <- "https://www.gsea-msigdb.org/gsea/msigdb/human/download_geneset.jsp?geneSetName="
+  } else if (species == "Mm") {
+    geneset_path <- "https://www.gsea-msigdb.org/gsea/msigdb/mouse/download_geneset.jsp?geneSetName="
+  } else {
+    stop("It's a specie that doesn't support.")
+  }
+  
+  temp.list <- c()
+  
+  temp.list <- lapply(name, function(n) {
+    geneset_url <- paste0(geneset_path, n, "&fileType=json")
+    temp <- fromJSON(geneset_url)
+    temp_gene <- c(list("gene"), temp[[1]]$geneSymbols)
+    geneset <- data.frame(gene = unlist(temp_gene))
+    return(geneset)
+  })
+  
+  
+  
+  
+  # if you wanna delete 'gene' from 1st row,
+  # geneset <- data.frame(gene = temp_df[[1]]$geneSymbols)
+  
+  names(temp.list) <- name
+  return(temp.list)
+}
 
-list <- msigdb_search()
+
+geneset_list <- msigdb.search()
+Hu_test_df <- msigdb.browse("Hu", geneset_list)
