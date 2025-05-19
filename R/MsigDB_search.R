@@ -100,7 +100,7 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
-  dn.Msigdf <- if(species == "HS" || is.null(species)) {
+  dn.Msigdf <- if(species == "Hs" || is.null(species)) {
     read.csv("https://raw.githubusercontent.com/HonglabKNU/Main/refs/heads/CS/DB/msigdb_v2024.1.Hs.csv")
   } else if(species == "Mm") {
     read.csv("https://raw.githubusercontent.com/HonglabKNU/Main/refs/heads/CS/DB/msigdb_v2024.1.Mm.csv")
