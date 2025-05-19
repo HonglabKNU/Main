@@ -6,7 +6,7 @@
 #============================================================================#
 install.packages(c("shiny", "DT","DBI", "RSQLite", "dplyr", "jsonlite"))
 
-msigdb.search <- function() {
+msigdb.search <- function(species = NULL) {
   
 library(shiny)
 library(DT)
@@ -68,8 +68,24 @@ ui <- fluidPage(
    column(2, selectInput("species", "Species: ",
               choices = c("all", "HS", "MM", "RN", "RM", "DR"),
               selected = "all")),
-   column(2, selectInput("collection", "Collection: ",
-              choices = c("all", "C2:CGP", "C1", "C2:CP:BIOCARTA", "C2:CP:KEGG_LEGACY", "C3:MIR:MIRDB", "C3:MIR:MIR_LEGACY", "C3:TFT:GTRD", "C3:TFT:TFT_LEGACY", "C2:CP:REACTOME", "C2:CP:WIKIPATHWAYS", "C2:CP", "C4:CGN", "C4:CM", "C6", "C4:3CA", "C7:IMMUNESIGDB", "C7:VAX", "C8", "C5:GO:BP", "C5:GO:CC", "C5:GO:MF", "H", "C5:HPO", "C2:CP:KEGG_MEDICUS"),
+   column(4, selectInput("collection", "Collection: ",
+              choices = if(is.null(species)) {
+                c("all", "C2:CGP", "C1", "C2:CP:BIOCARTA", "C2:CP:KEGG_LEGACY", "C3:MIR:MIRDB",
+                  "C3:MIR:MIR_LEGACY", "C3:TFT:GTRD", "C3:TFT:TFT_LEGACY", 
+                  "C2:CP:REACTOME", "C2:CP:WIKIPATHWAYS", "C2:CP", "C4:CGN", 
+                  "C4:CM", "C6", "C4:3CA", "C7:IMMUNESIGDB", "C7:VAX", "C8", 
+                  "C5:GO:BP", "C5:GO:CC", "C5:GO:MF", "H", "C5:HPO", "C2:CP:KEGG_MEDICUS")
+              }  else if(species == "Mm") {
+                c("all", "M2:CGP", "M5:GO:BP", "M3:MIRDB", "M5:MPT", "M8", "MH", 
+                  "M2:CP:REACTOME", "M2:CP:WIKIPATHWAYS", "M5:GO:CC", 
+                  "M5:GO:MF", "M1", "M2:CP:BIOCARTA", "M3:GTRD")
+              } else {
+                c("all", "C2:CGP", "C1", "C2:CP:BIOCARTA", "C2:CP:KEGG_LEGACY", "C3:MIR:MIRDB",
+                  "C3:MIR:MIR_LEGACY", "C3:TFT:GTRD", "C3:TFT:TFT_LEGACY", 
+                  "C2:CP:REACTOME", "C2:CP:WIKIPATHWAYS", "C2:CP", "C4:CGN", 
+                  "C4:CM", "C6", "C4:3CA", "C7:IMMUNESIGDB", "C7:VAX", "C8", 
+                  "C5:GO:BP", "C5:GO:CC", "C5:GO:MF", "H", "C5:HPO", "C2:CP:KEGG_MEDICUS")
+                  },          
               selected = "all"))
     ),
 
@@ -84,8 +100,15 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
-  Hu.Msigdf <- read.csv("https://raw.githubusercontent.com/HonglabKNU/Main/refs/heads/CS/DB/msigdb_v2024.1.Hs.csv")
-  Hu.Msigdf <- Hu.Msigdf[, -1]
+  dn.Msigdf <- if(species == "HS" || is.null(species)) {
+    read.csv("https://raw.githubusercontent.com/HonglabKNU/Main/refs/heads/CS/DB/msigdb_v2024.1.Hs.csv")
+  } else if(species == "Mm") {
+    read.csv("https://raw.githubusercontent.com/HonglabKNU/Main/refs/heads/CS/DB/msigdb_v2024.1.Mm.csv")
+  } else {
+    read.csv("https://raw.githubusercontent.com/HonglabKNU/Main/refs/heads/CS/DB/msigdb_v2024.1.Hs.csv")
+  }
+  
+  Hu.Msigdf <- dn.Msigdf[, -1]
   Hu.Msigdf$Detail_link <- paste0(
     '<a href="https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/',
     Hu.Msigdf$standard_name,
@@ -250,7 +273,7 @@ msigdb.browse <- function(species, name) {
   temp.list <- lapply(name, function(n) {
     geneset_url <- paste0(geneset_path, n, "&fileType=json")
     temp <- fromJSON(geneset_url)
-    temp_gene <- c(list("gene"), temp[[1]]$geneSymbols)
+    temp_gene <- c(temp[[1]]$geneSymbols)
     geneset <- data.frame(gene = unlist(temp_gene))
     return(geneset)
   })
@@ -266,5 +289,9 @@ msigdb.browse <- function(species, name) {
 }
 
 
-geneset_list <- msigdb.search()
-Hu_test_df <- msigdb.browse("Hu", geneset_list)
+Hu_geneset_list <- msigdb.search() #or msigdb.search("HS")
+Mm_geneset_list <- msigdb.search("Mm")
+
+
+Hu_test_df <- msigdb.browse("Hu", Hu_geneset_list)
+Mm_test_df <- msigdb.browse("Mm", Mm_geneset_list)
