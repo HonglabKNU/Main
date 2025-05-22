@@ -68,7 +68,7 @@ hGSEA <- function(data,
   for (i in seq_along(genesets)) {
       GSEA_df <- merge(data, genesets[i], by = "gene")
       if (nrow(GSEA_df) == 0) {
-        warning("No matchiing gene with", names(genesets[i]))
+        warning("No matchiing gene with: ", names(genesets[i]))
         next
       }
       
