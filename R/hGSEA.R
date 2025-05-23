@@ -20,17 +20,17 @@ hGSEA <- function(data,
                   ...) {
   
   library(clusterProfiler)
-
-#make temp list
+  
+  #make temp list
   temp_result <- list()
   
-#check the format of gene sets
+  #check the format of gene sets
   if(length(genesets) < 1) {
     stop("Wrong gene set. Please check the list.")
   } 
   
-#check the format of the data file
-#The data file must have 2 cols, 1st col's class is character, 2nd col's class is numeric
+  #check the format of the data file
+  #The data file must have 2 cols, 1st col's class is character, 2nd col's class is numeric
   if(ncol(data) != 2) {
     stop("Wrong data. Please check your data format")
   } else if(class(data[[1]]) != "character") {
@@ -39,7 +39,7 @@ hGSEA <- function(data,
     stop("Wrong data. Second column's class is not 'numeric'")
   }
   
-# pre-processing of data
+  # pre-processing of data
   names(data) <- c("gene", "logFC")
   max_abs_pos <- function(x) {
     max_abs <- max(abs(x))
@@ -55,42 +55,42 @@ hGSEA <- function(data,
   data_vec <- data$logFC
   names(data_vec) <- data$gene
   data_vec <- sort(data_vec, decreasing = T)
-    
+  
   #check the exponent
   if(exponent == "classic" || is.null(exponent) || exponent == 0) {
     exponent <- 0
-  }  else if (expoenent == "weight" || exponent == 1) {
+  }  else if (exponent == "weight" || exponent == 1) {
     exponent <- 1
   } else {
     exponent <-1
   }
   
   for (i in seq_along(genesets)) {
-      GSEA_df <- merge(data, genesets[i], by = "gene")
-      if (nrow(GSEA_df) == 0) {
-        warning("No matchiing gene with: ", names(genesets[i]))
-        next
-      }
-      
-      temp_df <- data.frame(Title = rep(names(genesets[i]), nrow(data)), Gene = genesets[[i]]$gene)
-      
-      GSEA_result <- clusterProfiler::GSEA(data_vec,
-                                      TERM2GENE = temp_df,
-                                      exponent = exponent,
-                                      minGSSize = minGSSize,
-                                      maxGSSize = maxGSSize,
-                                      eps = eps,
-                                      pvalueCutoff = pvalueCutoff,
-                                      pAdjustMethod = pAdjustMethod,
-                                      TERM2NAME = TERM2NAME,
-                                      verbose = verbose,
-                                      seed = seed,
-                                      by = by)
-      
-      result_name <- names(genesets[i])
-      temp_result[[result_name]] <- GSEA_result
+    GSEA_df <- merge(data, genesets[i], by = "gene")
+    if (nrow(GSEA_df) == 0) {
+      warning("No matchiing gene with: ", names(genesets[i]))
+      next
     }
-
+    
+    temp_df <- data.frame(Title = rep(names(genesets[i]), length(genesets[[i]]$gene)), Gene = genesets[[i]]$gene)
+    
+    GSEA_result <- clusterProfiler::GSEA(data_vec,
+                                         TERM2GENE = temp_df,
+                                         exponent = exponent,
+                                         minGSSize = minGSSize,
+                                         maxGSSize = maxGSSize,
+                                         eps = eps,
+                                         pvalueCutoff = pvalueCutoff,
+                                         pAdjustMethod = pAdjustMethod,
+                                         TERM2NAME = TERM2NAME,
+                                         verbose = verbose,
+                                         seed = seed,
+                                         by = by)
+    
+    result_name <- names(genesets[i])
+    temp_result[[result_name]] <- GSEA_result
+  }
+  
   return(temp_result)
 }
 

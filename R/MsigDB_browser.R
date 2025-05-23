@@ -6,9 +6,6 @@
 ## 2. 2nd parameter name = gene set's name, Just copy and paste from MsigDB.
 #============================================================================#
 
-install.packages("jsonlite")
-library(jsonlite)
-
 msigdb.browse <- function(species, name) {
   library(jsonlite)
   
